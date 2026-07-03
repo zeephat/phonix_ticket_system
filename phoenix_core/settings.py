@@ -1,12 +1,15 @@
+from dotenv import load_dotenv
+load_dotenv() 
 from pathlib import Path
+import os
 
 # 1. Mipangilio ya Njia (Paths)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. Usalama (Security) - Hii ni key ya majaribio ya local
-SECRET_KEY = 'django-insecure-phoenix-ticket-system-key-2026'
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY =  os.environ.get('DJANGO_SECRET_KEY')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 # 3. Usajili wa Application (Installed Apps)
 INSTALLED_APPS = [
