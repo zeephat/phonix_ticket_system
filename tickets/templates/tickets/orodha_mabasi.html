@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="sw" id="html-tag" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Ticket & Logistics System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <style>
+        .chochoro { width: 18px; }
+        .seat-scroll::-webkit-scrollbar { width: 4px; }
+        .seat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* Mitindo ya kuwaka waka (Glowing / Pulsing Effects) kwa ajili ya Ratiba za sasa */
+        @keyframes glow {
+            0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 4px rgba(59, 130, 246, 0.5); }
+            50% { transform: scale(1.01); opacity: 0.95; box-shadow: 0 0 12px rgba(59, 130, 246, 0.8); }
+        }
+        .glowing-table { animation: glow 3s infinite ease-in-out; }
+        .pulse-dot { animation: pulse 1.5s infinite; }
+    </style>
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300 relative">
+
+    <!-- FLOATING COMMUNICATION NUMBER (0740261137) -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2">
+        <a href="https://wa.me/255740261137" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95 group">
+            <i class="fa-brands fa-whatsapp text-xl"></i>
+            <span class="absolute right-14 bg-slate-900 text-white text-[10px] font-black px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Msaada WhatsApp</span>
+        </a>
+        <a href="tel:0740261137" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center space-x-2 transition-transform hover:scale-105 active:scale-95">
+            <i class="fa-solid fa-phone-volume animate-bounce"></i>
+            <span class="text-xs font-black tracking-wider">0740261137</span>
+        </a>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="global-notification" class="hidden fixed top-5 right-5 z-50 max-w-sm w-full bg-white dark:bg-slate-800 border-l-4 border-emerald-500 shadow-2xl rounded-xl p-4">
+        <div class="flex items-start">
+            <div class="flex-shrink-0 text-emerald-500"><i class="fa-solid fa-circle-check text-lg"></i></div>
+            <div class="ml-3 w-full">
+                <p id="notif-title" class="text-xs font-black uppercase text-slate-900 dark:text-white tracking-wide">Mfumo</p>
+                <p id="notif-body" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Taarifa...</p>
+            </div>
+            <button onclick="closeNotification()" class="ml-4 text-slate-400 hover:text-slate-600 text-xs cursor-pointer">🗙</button>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-sm p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-bus text-xl text-sky-400"></i>
+                <span class="text-base font-black tracking-wider uppercase">Phoenix System</span>
+            </div>
+            <div class="flex items-center space-x-4 text-xs font-bold">
+                <button onclick="triggerToast('Broadcast', 'SMS ya dharura imetumwa')" class="bg-rose-600 px-3 py-1.5 rounded-lg text-white flex items-center space-x-1 cursor-pointer">
+                    <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                    <span data-translate="emergency_btn">Dharura (SMS Broadcast)</span>
+                </button>
+                <select id="lang-select" onchange="changeLanguage()" class="bg-blue-800/80 dark:bg-slate-800 text-white rounded-lg px-2 py-1 cursor-pointer">
+                    <option value="sw">🇹🇿 Swahili</option>
+                    <option value="en">🇬🇧 English</option>
+                </select>
+                <button onclick="toggleTheme()" class="bg-blue-800/80 dark:bg-slate-800 p-2 rounded-lg text-amber-400 cursor-pointer">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO WELCOME SECTION -->
+    <header class="bg-gradient-to-br from-indigo-950 via-blue-900 to-indigo-900 text-white py-16 px-4 text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="max-w-3xl mx-auto relative z-10">
+            <span class="bg-sky-400/10 text-sky-400 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full border border-sky-500/20">
+                🚀 Karibu Kwenye Mapinduzi ya Usafiri
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight mt-4 mb-4 leading-tight">
+                Kata Tiketi Yako ya Basi <br class="hidden md:inline">Mtandaoni kwa Dakika 1 Tu!
+            </h1>
+            <p class="text-xs md:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+                Sahau adha ya foleni stendi! Mfumo wa **Phoenix** unakupa uwezo wa kuchagua basi ulipendalo, kukagua viti vilivyowazi, na kulipia kwa urahisi ukiwa popote pale Tanzania. Safari yako ya kifalme inaanza hapa.
+            </p>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-5xl mx-auto px-4 py-8 -mt-10 relative z-20">
+        
+        <!-- SEARCH FORM -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 mb-8 border border-slate-100 dark:border-slate-700/60">
+            <form method="GET" action="" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label data-translate="lbl_origin" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">📍 KUTOKA (ORIGIN)</label>
+                    <select name="kutoka" class="w-full bg-slate-50 dark:bg-slate-700 p-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:outline-none cursor-pointer">
+                        <option value="" data-translate="opt_origin">-- Chagua Mwanzo --</option>
+                        {% for eneo in maeneo_kutoka %}
+                            <option value="{{ eneo }}" {% if chaguzi_kutoka == eneo %}selected{% endif %}>{{ eneo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label data-translate="lbl_dest" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">🎯 KWENDA (DESTINATION)</label>
+                    <select name="kwenda" class="w-full bg-slate-50 dark:bg-slate-700 p-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:outline-none cursor-pointer">
+                        <option value="" data-translate="opt_dest">-- Chagua Mwisho --</option>
+                        {% for eneo in maeneo_kwenda %}
+                            <option value="{{ eneo }}" {% if chaguzi_kwenda == eneo %}selected{% endif %}>{{ eneo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label data-translate="lbl_date" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">📅 TAREHE YA SAFARI</label>
+                    <input type="date" name="tarehe" value="{{ chaguzi_tarehe }}" class="w-full bg-slate-50 dark:bg-slate-700 p-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-white cursor-pointer">
+                </div>
+                <div>
+                    <button type="submit" class="w-full h-[43px] bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-magnifying-glass"></i> <span data-translate="btn_search">Tafuta Mabasi</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- JEDWALI DOGO LINOLOWAKA LA RATIBA ZA SASA (LIVE SCHEDULES TABLE) -->
+        <section class="mb-10 content-glowing-wrapper">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <div class="flex items-center space-x-2">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                    <h3 class="text-xs font-black uppercase text-slate-900 dark:text-white tracking-wider">Ratiba za Safari za Sasa Hivi (Live Fleet Board)</h3>
+                </div>
+                <span class="text-[10px] bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-sky-400 font-extrabold px-2 py-0.5 rounded-md">12 Zilizopo</span>
+            </div>
+            
+            <div class="glowing-table bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-blue-100 dark:border-slate-700 shadow-md">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                <th class="p-3 pl-4">Basi / Plate</th>
+                                <th class="p-3">Ruti (Safari)</th>
+                                <th class="p-3 text-right pr-4">Tarehe & Muda</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-xs font-bold divide-y divide-slate-100 dark:divide-slate-700 text-slate-700 dark:text-slate-300">
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 907YTG</td>
+                                <td class="p-3 font-medium">Moshi <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dodoma</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">26/07 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 673GJK</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dar es Salaam</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">20/07 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 673GJK</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dar es Salaam</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">18/07 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 786HGD</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dar es Salaam</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">16/07 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 786HGD</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Kahama</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">14/07 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 345ZRT</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dar es Salaam</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">12/07 @ 00:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 786HGD</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Mwanza</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">10/07 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 907YTG</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dar es Salaam</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">10/06 @ 06:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 345ZRT</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Mwanza</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">30/06 @ 11:21</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 907YTG</td>
+                                <td class="p-3 font-medium">Moshi <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dodoma</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">03/06 @ 12:00</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 763TRY</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Dar es Salaam</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">01/07 @ 10:52</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 dark:hover:bg-slate-900/20 transition-colors">
+                                <td class="p-3 pl-4 text-blue-600 dark:text-sky-400 font-black">T 345ZRT</td>
+                                <td class="p-3 font-medium">Arusha <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-slate-400"></i> Mwanza</td>
+                                <td class="p-3 text-right pr-4 text-slate-500 font-black">25/06 @ 06:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHY CHOOSE US (KWANINI UTUMIE HUDUMA ZETU) -->
+        <section class="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-start space-x-4">
+                <div class="bg-blue-50 dark:bg-blue-950/50 p-3 rounded-xl text-blue-600"><i class="fa-solid fa-shield-halved text-lg"></i></div>
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-wide text-slate-900 dark:text-white">Ulinzi na Usalama</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">Viti vyako vinalockiwa mara moja na malipo yako yanapita kwenye mifumo iliyothibitishwa.</p>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-start space-x-4">
+                <div class="bg-amber-50 dark:bg-amber-950/50 p-3 rounded-xl text-amber-500"><i class="fa-solid fa-couch text-lg"></i></div>
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-wide text-slate-900 dark:text-white">Chagua Kiti Ukipendacho</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">Iwe dirishani, koridoro au viti maalum vya kipaumbele; unaona na kuchagua mwenyewe kwa macho yako.</p>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-start space-x-4">
+                <div class="bg-emerald-50 dark:bg-emerald-950/50 p-3 rounded-xl text-emerald-500"><i class="fa-solid fa-headset text-lg"></i></div>
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-wide text-slate-900 dark:text-white">Msaada Saa 24/7</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">Timu yetu ipo tayari kukuhudumia kupitia namba zetu za simu wakati wowote wa changamoto.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AVAILABLE ROUTES SECTION (RUTI ZINAZOPATIKANA) -->
+        <section class="mb-12">
+            <div class="flex items-center space-x-2 mb-4">
+                <i class="fa-solid fa-route text-blue-600 text-base"></i>
+                <h3 class="text-xs font-black uppercase text-slate-900 dark:text-white tracking-wider">Ruti Zetu Zinazopatikana Kwa Sasa</h3>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 border border-slate-100 dark:border-slate-700 p-3 rounded-xl flex items-center space-x-3 shadow-sm">
+                    <span class="text-lg">🏙️</span>
+                    <div>
+                        <h4 class="text-xs font-black">Dar es Salaam</h4>
+                        <p class="text-[9px] text-slate-400">Main Terminal</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 border border-slate-100 dark:border-slate-700 p-3 rounded-xl flex items-center space-x-3 shadow-sm">
+                    <span class="text-lg">🏔️</span>
+                    <div>
+                        <h4 class="text-xs font-black">Arusha</h4><p class="text-[9px] text-slate-400">Safari Hub</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 border border-slate-100 dark:border-slate-700 p-3 rounded-xl flex items-center space-x-3 shadow-sm">
+                    <span class="text-lg">🐟</span>
+                    <div>
+                        <h4 class="text-xs font-black">Mwanza</h4>
+                        <p class="text-[9px] text-slate-400">Rock City Routes</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 border border-slate-100 dark:border-slate-700 p-3 rounded-xl flex items-center space-x-3 shadow-sm">
+                    <span class="text-lg">🏛️</span>
+                    <div>
+                        <h4 class="text-xs font-black">Dodoma</h4>
+                        <p class="text-[9px] text-slate-400">Capital Central</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIST OF BUSES -->
+        <div class="grid grid-cols-1 gap-6">
+            {% for r in ratiba_za_safari %}
+                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60 p-6 relative">
+                    
+                    <!-- HEADER YA BASI -->
+                    <div class="mb-4 flex justify-between items-center">
+                        <div>
+                            <span class="bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-slate-300 text-[10px] font-black px-2.5 py-1 rounded-md uppercase block w-max mb-1">
+                                {{ r.bus.get_bus_type_display }}
+                            </span>
+                            <h4 id="comp-name-{{ r.schedule_id }}" class="text-xl font-black text-blue-900 dark:text-sky-400 tracking-tight">
+                                {{ r.bus.company.company_name }}
+                            </h4>
+                            <p class="text-xs text-slate-400 dark:text-slate-500">
+                                Plate No: <strong class="text-slate-600 dark:text-slate-300">{{ r.bus.plate_number }}</strong>
+                            </p>
+                        </div>
+                        <div class="text-right text-xs text-slate-400 dark:text-slate-500">
+                            <span class="block text-[10px] font-bold uppercase">Uwezo wa Basi</span>
+                            <strong class="text-slate-700 dark:text-slate-300 text-sm">{{ r.bus.total_capacity }} Viti</strong>
+                        </div>
+                    </div>
+
+                    <!-- RUTI NA VITUO -->
+                    <div class="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-4 mb-4 text-xs">
+                        <div>
+                            <span data-translate="from_stendi" class="text-slate-400 block text-[9px] font-black uppercase">Kutoka Stendi Kuu</span>
+                            <strong id="origin-{{ r.schedule_id }}" class="text-sm text-slate-800 dark:text-white font-black">{{ r.route.origin }}</strong>
+                        </div>
+                        <div>
+                            <span data-translate="to_stendi" class="text-slate-400 block text-[9px] font-black uppercase">Kwenda Stendi ya Mwisho</span>
+                            <strong id="dest-{{ r.schedule_id }}" class="text-sm text-slate-800 dark:text-white font-black">{{ r.route.destination }}</strong>
+                        </div>
+                    </div>
+
+                    <!-- TAREHE NA MUDA HALISI -->
+                    <div class="grid grid-cols-2 gap-4 border-b border-slate-100 dark:border-slate-700/50 pb-4 mb-4">
+                        <div class="flex items-center space-x-2 text-xs">
+                            <i class="fa-regular fa-calendar text-blue-500"></i>
+                            <span>Tarehe: <strong class="text-slate-700 dark:text-slate-300">{{ r.departure_time|date:"Y-m-d" }}</strong></span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <i class="fa-regular fa-clock text-blue-500"></i>
+                            <span>Kuondoka: <strong class="text-slate-700 dark:text-slate-300">{{ r.departure_time|date:"H:i" }} HRS</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- AMENITIES -->
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center space-x-1">
+                            <i class="fa-solid fa-star text-[9px]"></i> <span>4.8 Rating</span>
+                        </span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center space-x-1">
+                            <i class="fa-solid fa-wifi text-[9px]"></i> <span>Free WiFi</span>
+                        </span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center space-x-1">
+                            <i class="fa-solid fa-bolt text-[9px]"></i> <span>USB Charger</span>
+                        </span>
+                        <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center space-x-1">
+                            <i class="fa-solid fa-snowflake text-[9px]"></i> <span>A/C Full</span>
+                        </span>
+                    </div>
+
+                    <!-- FOOTER YA CARD: BEI NA KITUFE -->
+                    <div class="flex justify-between items-center pt-1">
+                        <div>
+                            <p data-translate="lbl_fare" class="text-[9px] text-slate-400 uppercase font-black">Nauli (Kila Kiti)</p>
+                            <p class="text-xl font-black text-blue-600 dark:text-blue-400">TSh <span id="base-price-{{ r.schedule_id }}">{{ r.base_price|floatformat:0 }}</span></p>
+                        </div>
+                        <button 
+                            type="button" 
+                            id="btn-main-{{ r.schedule_id }}"
+                            data-booked="{{ r.viti_vilivyofungwa_list|join:',' }}"
+                            onclick="initiateBusSeats('{{ r.schedule_id }}')" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black py-3 px-5 rounded-xl shadow cursor-pointer transition-transform active:scale-95"
+                        >
+                            <span data-translate="btn_book_now">Kata Tiketi Sasa</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <!-- SEATS & PREMIUM PAYMENT PANEL -->
+                    <div id="seats-panel-{{ r.schedule_id }}" class="hidden mt-6 pt-6 border-t border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30 p-5 rounded-2xl">
+                        
+                        <!-- FILTERS ZA VITI -->
+                        <div class="flex gap-2 mb-4 text-[10px] font-bold uppercase">
+                            <button type="button" onclick="filterSeats('{{ r.schedule_id }}', 'all')" class="bg-blue-600 text-white px-3 py-1 rounded cursor-pointer">Vyote</button>
+                            <button type="button" onclick="filterSeats('{{ r.schedule_id }}', 'dirisha')" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1 rounded cursor-pointer">Dirishani</button>
+                            <button type="button" onclick="filterSeats('{{ r.schedule_id }}', 'njia')" class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1 rounded cursor-pointer">Njia Kuu</button>
+                            <button type="button" onclick="filterSeats('{{ r.schedule_id }}', 'priority')" class="bg-amber-500 text-white px-3 py-1 rounded cursor-pointer"><i class="fa-solid fa-wheelchair text-[9px]"></i> Maalum</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            
+                            <!-- UPANDE WA RAMANI YA VITI -->
+                            <div class="lg:col-span-7 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-2 flex items-center justify-between">
+                                    <span>Mbele (Unyozi wa Dereva) 🚌</span>
+                                    <span>Mlango 🚪</span>
+                                </p>
+                                <div id="seat-grid-{{ r.schedule_id }}" class="seat-scroll grid grid-cols-5 gap-2 max-h-[380px] overflow-y-auto pr-1"></div>
+                            </div>
+
+                            <!-- UPANDE WA FOMU YA TAARIFA, VITUO VIDOGO NA AMENITIES -->
+                            <div class="lg:col-span-5 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+                                <div class="space-y-3 text-xs">
+                                    
+                                    <!-- COUNTDOWN LOCK TIMER -->
+                                    <div id="timer-box-{{ r.schedule_id }}" class="hidden bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 p-2 rounded-xl flex justify-between font-black">
+                                        <span>Muda wa Kubook (Lock):</span> <span id="countdown-{{ r.schedule_id }}">10:00</span>
+                                    </div>
+
+                                    <!-- VITUO VIDOGO VYA KUPANDIA NA KUSHUKIA -->
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-[9px] font-black text-blue-600 uppercase mb-1">📍 Kituo cha Kupandia</label>
+                                            <select id="boarding-{{ r.schedule_id }}" class="w-full bg-slate-50 dark:bg-slate-700 p-2 rounded-xl border border-slate-100 font-bold focus:outline-none">
+                                                <option value="Stendi Kuu">Stendi Kuu Kuu</option>
+                                                <option value="Mbezi Louis / Shekilango">Mbezi Louis / Shekilango</option>
+                                                <option value="Chalinze Junction">Chalinze Junction</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[9px] font-black text-indigo-600 uppercase mb-1">🏁 Kituo cha Kushukia</label>
+                                            <select id="dropping-{{ r.schedule_id }}" class="w-full bg-slate-50 dark:bg-slate-700 p-2 rounded-xl border border-slate-100 font-bold focus:outline-none">
+                                                <option value="Stendi ya Mwisho">Stendi ya Mwisho</option>
+                                                <option value="Njiani / Katikati ya Safari">Njiani (Katikati ya Ruti)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- UNYAMA WA KINYAMWEZI: CHAGUA NA HESABU MIZIGO MIKUBWA DYNAMIC -->
+                                    <div class="bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <label class="block text-[10px] font-black text-slate-500 uppercase">🧳 Maboksi / Mizigo Mikubwa</label>
+                                                <p class="text-[9px] text-slate-400">+ TSh 3,000 kwa kila boksi la ziada</p>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <button type="button" onclick="updateLuggageCount('{{ r.schedule_id }}', -1)" class="w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-lg font-black text-center">-</button>
+                                                <span id="luggage-count-{{ r.schedule_id }}" class="font-black text-sm">0</span>
+                                                <button type="button" onclick="updateLuggageCount('{{ r.schedule_id }}', 1)" class="w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-lg font-black text-center">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl flex justify-between font-bold">
+                                        <span data-translate="pay_seat">Viti Vilivyochaguliwa:</span> <span id="selected-seat-no-{{ r.schedule_id }}" class="text-blue-600 font-black">Hajachagua</span>
+                                    </div>
+                                    <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl flex justify-between font-bold">
+                                        <span data-translate="pay_total">Jumla ya Malipo:</span> <span id="total-price-{{ r.schedule_id }}" class="text-emerald-600 font-black">TSh 0</span>
+                                    </div>
+
+                                    <!-- FOMU YA MTUMIAJI -->
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Jina Kamili la Abiria</label>
+                                        <input type="text" id="fullname-{{ r.schedule_id }}" placeholder="Joseph Kingo" class="w-full bg-slate-50 dark:bg-slate-700 p-2 rounded-xl border border-slate-200 dark:border-slate-600 focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Namba ya Simu ya Malipo</label>
+                                        <input type="tel" id="phone-{{ r.schedule_id }}" oninput="validatePhoneNumber('{{ r.schedule_id }}')" placeholder="0712345678" class="w-full bg-slate-50 dark:bg-slate-700 p-2 rounded-xl border border-slate-200 dark:border-slate-600 focus:outline-none">
+                                        <p id="phone-err-{{ r.schedule_id }}" class="text-[9px] text-rose-500 font-bold mt-1 hidden">Andika namba sahihi (06/07XXXXXXXX)</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Mtandao wa Pesa</label>
+                                        <select id="network-{{ r.schedule_id }}" class="w-full bg-slate-50 dark:bg-slate-700 p-2 rounded-xl border border-slate-200 dark:border-slate-600 focus:outline-none font-bold">
+                                            <option value="M-Pesa">Vodacom M-Pesa</option>
+                                            <option value="Tigo Pesa">Tigo Pesa</option>
+                                            <option value="Airtel Money">Airtel Money</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="button" id="pay-btn-{{ r.schedule_id }}" disabled onclick="processBackendPayment('{{ r.schedule_id }}')" class="w-full mt-4 bg-slate-300 dark:bg-slate-700 text-slate-500 font-black py-3 rounded-xl uppercase tracking-wider text-xs cursor-not-allowed flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-lock"></i> <span data-translate="btn_pay_now">Lipa kwa Simu Sasa</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DYNAMIC REAL TICKET OUTPUT (RISITI) -->
+                    <div id="ticket-success-{{ r.schedule_id }}" class="hidden mt-6 p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-900 border-2 border-dashed border-emerald-300 rounded-3xl">
+                        <div class="text-xs font-semibold">
+                            <p class="text-emerald-600 font-black uppercase text-sm mb-2">✔ Tiketi Zilizothibitishwa Kamili!</p>
+                            <div id="ticket-list-container-{{ r.schedule_id }}" class="space-y-2 border-t pt-2"></div>
+                            <button type="button" onclick="window.print()" class="bg-emerald-600 text-white text-[10px] font-bold px-3 py-1.5 rounded mt-3 shadow cursor-pointer">
+                                <i class="fa-solid fa-print"></i> Print / Download PDF Ticket
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            {% empty %}
+                <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 p-6 rounded-2xl text-center">
+                    <p class="text-amber-800 dark:text-amber-400 font-bold" data-translate="no_bus_alert">HAKUNA BASI LILILOPATIKANA KWA SASA MKUU.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- CSRF SECURITY UTILITY FOR DJANGO BACKEND -->
+        <input type="hidden" id="global-csrf-token" value="{{ csrf_token }}">
+
+        <!-- PREMIUM FLEET SHOWROOM (MAPICHA PICHA YA MABASI) -->
+        <section class="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10">
+            <div class="flex items-center space-x-2 mb-6">
+                <i class="fa-solid fa-images text-blue-600 text-lg"></i>
+                <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Kikosi Kazi Kilichosajiliwa (Our Premium Fleet)</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700/80 group">
+                    <div class="aspect-video w-full bg-slate-100 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=600" alt="Bus 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-black">Shabiby Luxury Line</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Unyama wa Dodoma hadi Dar es Salaam kwa hadhi ya VIP.</p>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700/80 group">
+                    <div class="aspect-video w-full bg-slate-100 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&q=80&w=600" alt="Bus 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"></div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-black">BM Coach</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Uhakika wa safari za Kaskazini ukiwa na burudani tele njiani.</p>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700/80 group">
+                    <div class="aspect-video w-full bg-slate-100 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1626125345510-4603468ede1a?auto=format&fit=crop&q=80&w=600" alt="Bus 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-black">Kilimanjaro Express</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Saa na muda vimetunzwa kwa ajili ya safari yako ya weledi.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER WITH BRAND CHATA & COMPANY REGISTRATION BANNER -->
+    <footer class="bg-slate-900 text-slate-400 mt-20 border-t border-slate-800">
+        <!-- B2B INVITATION BANNER -->
+        <div class="bg-gradient-to-r from-blue-900 to-indigo-900 py-6 px-4 text-center text-white">
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-center sm:text-left">
+                    <h4 class="text-sm font-black uppercase tracking-wide">Wewe ni Mmiliki wa Makampuni ya Mabasi?</h4>
+                    <p class="text-[11px] text-sky-200 mt-0.5">Karibu ujisajili kwenye mfumo wetu ili uanze kuuza tiketi kidijitali na kupata ripoti sahihi za mauzo.</p>
+                </div>
+                <a href="/makampuni/register/" class="bg-white text-blue-900 text-[11px] font-black uppercase px-4 py-2 rounded-xl shadow hover:bg-slate-100 transition-colors whitespace-nowrap">
+                    Sajili Basi Lako Hapa <i class="fa-solid fa-arrow-trend-up ml-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- MAIN FOOTER BOTTOM -->
+        <div class="max-w-6xl mx-auto px-4 py-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-bus text-sky-400 text-base"></i>
+                <span class="text-white font-black uppercase tracking-widest text-xs">Phoenix Ticket & Logistics</span>
+            </div>
+            <div class="text-center sm:text-right text-[11px] text-slate-500">
+                <p>&copy; 2026 Phoenix System. Chata na Haki zote zimehifadhiwa.</p>
+                <p class="mt-0.5">Mifumo ya kisasa ya usafirishaji na tiketi nchini Tanzania.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPTS -->
+    <script>
+        const translations = {
+            sw: {
+                emergency_btn: "Dharura (SMS Broadcast)",
+                lbl_origin: "📍 KUTOKA (ORIGIN)", opt_origin: "-- Chagua Mwanzo --",
+                lbl_dest: "🎯 KWENDA (DESTINATION)", opt_dest: "-- Chagua Mwisho --",
+                lbl_date: "📅 TAREHE YA SAFARI", btn_search: "Tafuta Mabasi",
+                lbl_fare: "Nauli (Kila Kiti)", btn_book_now: "Kata Tiketi Sasa",
+                pay_seat: "Viti Vilivyochaguliwa:", pay_total: "Jumla ya Malipo:", btn_pay_now: "Lipa kwa Simu Sasa",
+                no_bus_alert: "HAKUNA BASI LILILOPATIKANA KWA SASA MKUU."
+            },
+            en: {
+                emergency_btn: "Emergency (SMS)",
+                lbl_origin: "📍 ORIGIN", opt_origin: "-- Select Origin --",
+                lbl_dest: "🎯 DESTINATION", opt_dest: "-- Select Destination --",
+                lbl_date: "📅 DEPARTURE DATE", btn_search: "Search Buses",
+                lbl_fare: "Fare (Per Seat)", btn_book_now: "Book Now",
+                pay_seat: "Selected Seats:", pay_total: "Total Payment:", btn_pay_now: "Pay via Mobile Now",
+                no_bus_alert: "NO BUS WAS FOUND AT THE MOMENT."
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLang = localStorage.getItem("phoenix_lang") || "sw";
+            document.getElementById("lang-select").value = savedLang;
+            changeLanguage();
+            if (localStorage.getItem("phoenix_theme") === "dark") {
+                document.getElementById('html-tag').classList.add('dark');
+                document.getElementById('theme-icon').className = "fa-solid fa-sun text-amber-400";
+            }
+        });
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            localStorage.setItem("phoenix_lang", lang);
+            document.querySelectorAll('[data-translate]').forEach(elem => {
+                const key = elem.getAttribute('data-translate');
+                if (translations[lang][key]) elem.textContent = translations[lang][key];
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.getElementById('html-tag');
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark'); icon.className = "fa-solid fa-moon";
+                localStorage.setItem("phoenix_theme", "light");
+            } else {
+                html.classList.add('dark'); icon.className = "fa-solid fa-sun text-amber-400";
+                localStorage.setItem("phoenix_theme", "dark");
+            }
+        }
+
+        function triggerToast(title, body) {
+            const notif = document.getElementById("global-notification");
+            document.getElementById("notif-title").innerText = title;
+            document.getElementById("notif-body").innerText = body;
+            notif.classList.remove("hidden");
+            setTimeout(() => { notif.classList.add("hidden"); }, 5000);
+        }
+
+        let selectedSeatsMap = {};
+        let countdownIntervals = {};
+        let luggageMap = {};
+
+        function initiateBusSeats(busId) {
+            document.getElementById(`seats-panel-${busId}`).classList.toggle('hidden');
+            const grid = document.getElementById(`seat-grid-${busId}`);
+            if (grid.children.length === 0) {
+                const bookedAttr = document.getElementById(`btn-main-${busId}`).getAttribute('data-booked');
+                const bookedSeats = bookedAttr ? bookedAttr.split(',') : [];
+                selectedSeatsMap[busId] = [];
+                luggageMap[busId] = 0;
+
+                for (let i = 1; i <= 60; i++) {
+                    let seatNo = i < 10 ? '0' + i : '' + i;
+                    const btn = document.createElement('button');
+                    btn.type = "button"; btn.id = `seat-${busId}-${seatNo}`; btn.innerText = seatNo;
+                    
+                    let isPriority = (i === 1 || i === 2);
+                    btn.setAttribute('data-seat-type', isPriority ? 'priority' : ((i % 4 === 1 || i % 4 === 0) ? 'dirisha' : 'njia'));
+
+                    if (bookedSeats.includes(seatNo)) {
+                        btn.className = "bg-slate-200 dark:bg-slate-700 text-slate-400 font-bold text-[10px] py-2 rounded-lg cursor-not-allowed";
+                        btn.disabled = true; btn.innerText += " 🔒";
+                    } else {
+                        if(isPriority) {
+                            btn.className = "bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-400 text-amber-700 dark:text-amber-300 font-black text-xs py-2 rounded-lg cursor-pointer flex flex-col items-center justify-center";
+                            btn.innerHTML = `${seatNo} <span class="text-[8px]">♿</span>`;
+                        } else {
+                            btn.className = "bg-slate-50 dark:bg-slate-700/40 border border-slate-200 text-slate-700 dark:text-white font-black text-xs py-2 rounded-lg cursor-pointer";
+                        }
+                        btn.onclick = function() { toggleMultiSeatSelection(busId, seatNo, isPriority); };
+                    }
+                    grid.appendChild(btn);
+                    if (i % 4 === 2) {
+                        const spacer = document.createElement('div'); spacer.className = "chochoro pointer-events-none";
+                        grid.appendChild(spacer);
+                    }
+                }
+            }
+        }
+
+        function filterSeats(busId, type) {
+            document.getElementById(`seat-grid-${busId}`).querySelectorAll('button').forEach(btn => {
+                if (type === 'all' || btn.disabled) { btn.classList.remove('hidden'); }
+                else { btn.classList.toggle('hidden', btn.getAttribute('data-seat-type') !== type); }
+            });
+        }
+
+        function toggleMultiSeatSelection(busId, seatNo, isPriority) {
+            if (isPriority && !selectedSeatsMap[busId].includes(seatNo)) {
+                if (!confirm("Kiti hiki kimetengwa maalum kwa Wazee, Wagonjwa na Wajawazito. Je, mteja ana sifa hizi?")) {
+                    return;
+                }
+            }
+
+            let list = selectedSeatsMap[busId];
+            const btn = document.getElementById(`seat-${busId}-${seatNo}`);
+
+            if (list.includes(seatNo)) {
+                list = list.filter(s => s !== seatNo);
+                if (isPriority) {
+                    btn.className = "bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-400 text-amber-700 dark:text-amber-300 font-black text-xs py-2 rounded-lg cursor-pointer flex flex-col items-center justify-center";
+                    btn.innerHTML = `${seatNo} <span class="text-[8px]">♿</span>`;
+                } else {
+                    btn.className = "bg-slate-50 dark:bg-slate-700/40 border border-slate-200 text-slate-700 dark:text-white font-black text-xs py-2 rounded-lg cursor-pointer";
+                }
+            } else {
+                list.push(seatNo);
+                btn.className = "bg-emerald-500 border border-emerald-600 text-white font-black text-xs py-2 rounded-lg shadow-md";
+                if(isPriority) btn.innerHTML = `${seatNo} ♿`;
+            }
+            selectedSeatsMap[busId] = list;
+            if (list.length > 0) { startSeatLockTimer(busId); } else { stopSeatLockTimer(busId); }
+            
+            recalculateTotalInvoice(busId);
+            validatePhoneNumber(busId);
+        }
+
+        function updateLuggageCount(busId, amount) {
+            let current = luggageMap[busId] || 0;
+            current += amount;
+            if (current < 0) current = 0;
+            luggageMap[busId] = current;
+            document.getElementById(`luggage-count-${busId}`).innerText = current;
+            recalculateTotalInvoice(busId);
+        }
+
+        function recalculateTotalInvoice(busId) {
+            const list = selectedSeatsMap[busId] || [];
+            const basePrice = parseInt(document.getElementById(`base-price-${busId}`).innerText) || 0;
+            const luggageBoxes = luggageMap[busId] || 0;
+            
+            const total = (basePrice * list.length) + (luggageBoxes * 3000);
+            
+            document.getElementById(`selected-seat-no-${busId}`).innerText = list.length > 0 ? list.join(", ") : "Hajachagua";
+            document.getElementById(`total-price-${busId}`).innerText = "TSh " + total.toLocaleString('en-US');
+        }
+
+        function startSeatLockTimer(busId) {
+            if (countdownIntervals[busId]) return;
+            document.getElementById(`timer-box-${busId}`).classList.remove('hidden');
+            let sec = 600;
+            countdownIntervals[busId] = setInterval(() => {
+                let m = Math.floor(sec / 60), s = sec % 60;
+                document.getElementById(`countdown-${busId}`).innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                if (sec-- <= 0) {
+                    clearInterval(countdownIntervals[busId]); delete countdownIntervals[busId];
+                    selectedSeatsMap[busId].forEach(st => {
+                        const b = document.getElementById(`seat-${busId}-${st}`);
+                        b.className = "bg-slate-50 border text-slate-700 py-2 rounded-lg";
+                    });
+                    selectedSeatsMap[busId] = [];
+                    luggageMap[busId] = 0;
+                    document.getElementById(`luggage-count-${busId}`).innerText = 0;
+                    recalculateTotalInvoice(busId);
+                    triggerToast('Muda Umeisha', 'Viti vimeachiliwa kiusalama!');
+                }
+            }, 1000);
+        }
+
+        function stopSeatLockTimer(busId) {
+            if (!countdownIntervals[busId]) return;
+            clearInterval(countdownIntervals[busId]); delete countdownIntervals[busId];
+            document.getElementById(`timer-box-${busId}`).classList.add('hidden');
+        }
+
+        function validatePhoneNumber(busId) {
+            const ph = document.getElementById(`phone-${busId}`).value;
+            const reg = /^(06|07)\d{8}$/;
+            const ok = reg.test(ph) && selectedSeatsMap[busId].length > 0;
+            document.getElementById(`phone-err-${busId}`).classList.toggle('hidden', ph.length === 0 || reg.test(ph));
+            
+            const btn = document.getElementById(`pay-btn-${busId}`);
+            btn.disabled = !ok;
+            btn.className = ok ? "w-full bg-emerald-600 text-white font-black py-3 rounded-xl uppercase text-xs cursor-pointer" : "w-full bg-slate-300 text-slate-500 font-black py-3 rounded-xl uppercase text-xs cursor-not-allowed";
+        }
+
+        function processBackendPayment(busId) {
+            const csrfToken = document.getElementById('global-csrf-token').value;
+            
+            const payload = {
+                schedule_id: busId,
+                fullname: document.getElementById(`fullname-${busId}`).value,
+                phone: document.getElementById(`phone-${busId}`).value,
+                network: document.getElementById(`network-${busId}`).value,
+                seats: selectedSeatsMap[busId],
+                boarding_point: document.getElementById(`boarding-${busId}`).value,
+                dropping_point: document.getElementById(`dropping-${busId}`).value,
+                extra_luggage_count: luggageMap[busId] || 0
+            };
+
+            if (!payload.seats || payload.seats.length === 0) {
+                alert('Tafadhali chagua angalau kiti kimoja kabla ya kulipa.');
+                return;
+            }
+
+            if (!payload.fullname || !payload.phone) {
+                alert('Tafadhali jaza Jina na Namba ya simu vizuri.');
+                return;
+            }
+
+            triggerToast('Malipo', 'Inatuma maombi salama kwenye seva...');
+
+            fetch('/api/pay/', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if(resData.status === 'success') {
+                    // 1. Zima timer ya kuzuia kiti (kama ipo)
+                    if (typeof stopSeatLockTimer === "function") {
+                        stopSeatLockTimer(busId);
+                    }
+                    
+                    // 2. Ficha panel nzima ya kuchagua viti na fomu ya malipo
+                    document.getElementById(`seats-panel-${busId}`).classList.add('hidden');
+                    
+                    // 3. KANGO YA KIUSALAMA (DATA PRIVACY): Badala ya kuonyesha tiketi hadharani, tunaweka ujumbe huu wa siri
+                    const listCont = document.getElementById(`ticket-list-container-${busId}`);
+                    if (listCont) {
+                        listCont.innerHTML = `
+                            <div class="p-5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-xl text-xs space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-black tracking-wider uppercase text-emerald-600 bg-emerald-500/20 px-2 py-0.5 rounded">🔒 DATA PRIVACY SECURED</span>
+                                </div>
+                                <p class="text-sm font-semibold mt-1">Ndugu ${resData.passenger}, malipo yako yamepokelewa kikamilifu!</p>
+                                <p class="text-slate-600 dark:text-slate-400">
+                                    Ili kulinda faragha na usalama wako, taarifa kamili za tiketi hazitaonyeshwa hapa hadharani kwenye skrini ya kivinjari.
+                                    Kila kitu kimeshasajiliwa salama kwenye database ya Phoenix.
+                                </p>
+                                <div class="p-3 bg-white/50 dark:bg-slate-900/50 rounded-lg border border-emerald-500/10 mt-2">
+                                    <p class="font-bold text-slate-800 dark:text-slate-200">📱 Angalia Simu Yako ya Mkono:</p>
+                                    <p>Ujumbe mfupi wa SMS wenye namba ya kiti, kumbukumbu ya tiketi (Booking Reference), na uthibitisho wa safari umeshatumwa moja kwa moja kwenda namba yako ya siri: <strong class="text-indigo-600 dark:text-indigo-400 font-black">${payload.phone}</strong>.</p>
+                                </div>
+                            </div>`;
+                    }
+                    
+                    // 4. Ficha au ondoa kabisa kitufe cha kuprint tiketi cha mwanzo ili kuzuia mtu mwingine kukibonyeza stendi
+                    const ticketSuccessDiv = document.getElementById(`ticket-success-${busId}`);
+                    if (ticketSuccessDiv) {
+                        const printBtn = ticketSuccessDiv.querySelector('button');
+                        if(printBtn) {
+                            printBtn.classList.add('hidden');
+                        }
+                        // Onyesha lile eneo la mafanikio ambalo sasa lina ujumbe wa usalama wa faragha
+                        ticketSuccessDiv.classList.remove('hidden');
+                    }
+                    
+                    triggerToast('Imekamilika', 'Tiketi imehifadhiwa na kutumwa kwa SMS ya siri!');
+                } else {
+                    alert('Muamala umefeli upande wa seva: ' + resData.message);
+                }
+            }).catch(err => {
+                console.error("Payment API Error:", err);
+                alert("Hitilafu imetokea wakati wa kuunganisha na seva ya Phoenix.");
+            });
+        }
+        function closeNotification() { document.getElementById("global-notification").classList.add("hidden"); }
+    </script>
+</body>
+</html>
