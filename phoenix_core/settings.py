@@ -38,7 +38,7 @@ MIDDLEWARE = [
 ]
 
 # 5. Mipangilio ya Faili Kuu la URL
-ROOT_URLCONF = 'phoenix_core.urls'
+ROOT_URLCONF = 'phonix_core.urls'
 
 # 6. Mipangilio ya Muonekano (Templates)
 TEMPLATES = [
@@ -58,7 +58,7 @@ TEMPLATES = [
 ]
 
 # 7. Mipangilio ya WSGI
-WSGI_APPLICATION = 'phoenix_core.wsgi.application'
+WSGI_APPLICATION = 'phonix_core.wsgi.application'
 
 # 8. Mipangilio ya Database (MAMP MySQL)
 DATABASES = {
