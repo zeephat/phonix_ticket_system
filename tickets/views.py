@@ -21,15 +21,27 @@ def tafuta_mabasi_view(request):
     """
     View inayoshughulikia kuonyesha ukurasa wa nyumbani na fomu ya kutafuta mabasi.
     """
-    # 1. Tunavuta data safi kutoka kwenye database kama zilivyo
-    raw_kutoka = Routes.objects.values_list('origin', flat=True).distinct()
-    raw_kwenda = Routes.objects.values_list('destination', flat=True).distinct()
+    # ------------------ INSPECION ZONE (UKAGUZI) ------------------
+    print("\n========= GENERAL INSPECTION START =========")
     
-    # 2. Tunalazimisha kuwa herufi kubwa kwa kutumia Python (Inafanya kazi 100% kwenye SQLite)
-    # Tunatumia set() ili kuondoa marudio (mfano ARUSHA na arusha zote zinakuwa ARUSHA moja tu)
+    # 1. Je, kuna data yoyote kwenye Routes?
+    all_db_routes = Routes.objects.all()
+    print(f"[INSPECT] Idadi ya Routes zilizopo kwenye DB ya Render: {all_db_routes.count()}")
+    
+    # 2. Vuta data ghafi
+    raw_kutoka = list(Routes.objects.values_list('origin', flat=True).distinct())
+    raw_kwenda = list(Routes.objects.values_list('destination', flat=True).distinct())
+    print(f"[INSPECT] Raw Kutoka kutoka DB: {raw_kutoka}")
+    print(f"[INSPECT] Raw Kwenda kutoka DB: {raw_kwenda}")
+    
+    # 3. Baada ya kusafisha na Python
     maeneo_kutoka = sorted(list(set(str(e).upper() for e in raw_kutoka if e)))
     maeneo_kwenda = sorted(list(set(str(e).upper() for e in raw_kwenda if e)))
-    
+    print(f"[INSPECT] Maeneo Kutoka yaliyoenda kwenye HTML: {maeneo_kutoka}")
+    print(f"[INSPECT] Maeneo Kwenda yaliyoenda kwenye HTML: {maeneo_kwenda}")
+    print("========= GENERAL INSPECTION END =========\n")
+    # -------------------------------------------------------------
+
     # Kupokea vigezo vya utafutaji kutoka kwenye GET request
     chaguzi_kutoka = request.GET.get('kutoka', '').upper()
     chaguzi_kwenda = request.GET.get('kwenda', '').upper()
