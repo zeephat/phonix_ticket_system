@@ -15,8 +15,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-local-test-key
 IS_RENDER = 'RENDER' in os.environ
 
 if IS_RENDER:
-    DEBUG = False
-    ALLOWED_HOSTS = ['phonix-ticket-system.onrender.com']
+    DEBUG = True
+    ALLOWED_HOSTS = ['phonix-ticket-system.onrender.com', '127.0.0.1', 'localhost']
 else:
     DEBUG = True
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
