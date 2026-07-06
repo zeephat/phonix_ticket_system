@@ -8,8 +8,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. Usalama (Security) - Hii ni key ya majaribio ya local
 SECRET_KEY =  os.environ.get('DJANGO_SECRET_KEY')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,phonix-ticket-system.onrender.com').split(',')
+DEBUG = True
+ALLOWED_HOSTS = ['phonix-ticket-system.onrender.com', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ['https://phonix-ticket-system.onrender.com']
 
 # 3. Usajili wa Application (Installed Apps)
