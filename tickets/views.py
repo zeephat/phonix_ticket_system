@@ -21,11 +21,16 @@ def tafuta_mabasi_view(request):
     """
     View inayoshughulikia kuonyesha ukurasa wa nyumbani na fomu ya kutafuta mabasi.
     """
-    # Tunalazimisha database isome kama Herufi Kubwa kisha tunapiga distinct kuondoa fujo ya SQLite
-    maeneo_kutoka = Routes.objects.annotate(origin_upper=Upper('origin')).values_list('origin_upper', flat=True).distinct()
-    maeneo_kwenda = Routes.objects.annotate(dest_upper=Upper('destination')).values_list('dest_upper', flat=True).distinct()
+    # 1. Tunavuta data safi kutoka kwenye database kama zilivyo
+    raw_kutoka = Routes.objects.values_list('origin', flat=True).distinct()
+    raw_kwenda = Routes.objects.values_list('destination', flat=True).distinct()
     
-    # Kupokea vigezo vya utafutaji (Lafudhi ya herufi kubwa ili mechi ikae sawa)
+    # 2. Tunalazimisha kuwa herufi kubwa kwa kutumia Python (Inafanya kazi 100% kwenye SQLite)
+    # Tunatumia set() ili kuondoa marudio (mfano ARUSHA na arusha zote zinakuwa ARUSHA moja tu)
+    maeneo_kutoka = sorted(list(set(str(e).upper() for e in raw_kutoka if e)))
+    maeneo_kwenda = sorted(list(set(str(e).upper() for e in raw_kwenda if e)))
+    
+    # Kupokea vigezo vya utafutaji kutoka kwenye GET request
     chaguzi_kutoka = request.GET.get('kutoka', '').upper()
     chaguzi_kwenda = request.GET.get('kwenda', '').upper()
     chaguzi_tarehe = request.GET.get('tarehe', '')
