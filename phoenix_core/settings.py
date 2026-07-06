@@ -27,6 +27,8 @@ INSTALLED_APPS = [
 # 4. Mifumo ya Kati (Middleware)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -95,5 +97,12 @@ USE_TZ = True
 # 11. Mafaili Tuli (Static Files - CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 
-# 12. Mfumo wa ID za Meza (Default Primary Key Field)
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
