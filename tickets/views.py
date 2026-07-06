@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from .models import Schedules, Routes, SeatLocks, Bookings, Payments, Users
+from django.db.models.functions import Upper
 
 def simu_ya_sms_gateway(phone, message):
     """
@@ -19,24 +20,23 @@ def simu_ya_sms_gateway(phone, message):
 def tafuta_mabasi_view(request):
     """
     View inayoshughulikia kuonyesha ukurasa wa nyumbani na fomu ya kutafuta mabasi.
-    Inachukua data za maeneo ya kutoka na kwenda ili kuzionyesha kwenye dropdowns.
     """
-    # Hapa tunavuta maeneo yote yaliyopo kwenye database kwa ajili ya fomu ya utafutaji
-    maeneo_kutoka = Routes.objects.values_list('origin', flat=True).distinct()
-    maeneo_kwenda = Routes.objects.values_list('destination', flat=True).distinct()
+    # Tunalazimisha database isome kama Herufi Kubwa kisha tunapiga distinct kuondoa fujo ya SQLite
+    maeneo_kutoka = Routes.objects.annotate(origin_upper=Upper('origin')).values_list('origin_upper', flat=True).distinct()
+    maeneo_kwenda = Routes.objects.annotate(dest_upper=Upper('destination')).values_list('dest_upper', flat=True).distinct()
     
-    # Kupokea vigezo vya utafutaji kutoka kwenye GET request (kama vipo)
-    chaguzi_kutoka = request.GET.get('kutoka', '')
-    chaguzi_kwenda = request.GET.get('kwenda', '')
+    # Kupokea vigezo vya utafutaji (Lafudhi ya herufi kubwa ili mechi ikae sawa)
+    chaguzi_kutoka = request.GET.get('kutoka', '').upper()
+    chaguzi_kwenda = request.GET.get('kwenda', '').upper()
     chaguzi_tarehe = request.GET.get('tarehe', '')
     
-    # Kuanza kuchuja ratiba za safari kulingana na alichochagua mtumiaji
+    # Kuanza kuchuja ratiba za safari
     ratiba_za_safari = Schedules.objects.all()
     
     if chaguzi_kutoka:
-        ratiba_za_safari = ratiba_za_safari.filter(route__origin=chaguzi_kutoka)
+        ratiba_za_safari = ratiba_za_safari.filter(route__origin__iexact=chaguzi_kutoka)
     if chaguzi_kwenda:
-        ratiba_za_safari = ratiba_za_safari.filter(route__destination=chaguzi_kwenda)
+        ratiba_za_safari = ratiba_za_safari.filter(route__destination__iexact=chaguzi_kwenda)
     if chaguzi_tarehe:
         ratiba_za_safari = ratiba_za_safari.filter(departure_time__date=chaguzi_tarehe)
         
