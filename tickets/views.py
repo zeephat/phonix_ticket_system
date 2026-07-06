@@ -153,3 +153,11 @@ def kamilisha_malipo_api(request):
             return JsonResponse({'status': 'failed', 'message': str(e)}, status=500)
             
     return JsonResponse({'status': 'failed', 'message': 'Njia Haikubaliki'}, status=405)
+
+def sajili_kampuni_view(request):
+    """View inayoshughulikia usajili wa makampuni ya mabasi"""
+    if request.method == 'POST':
+        # Hapa mbeleni utaandika kodi ya kupokea fomu na kusave kwenye database
+        pass
+        
+    return render(request, 'tickets/sajili_kampuni.html')
