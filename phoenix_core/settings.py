@@ -9,7 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 2. Usalama (Security) - Hii ni key ya majaribio ya local
 SECRET_KEY =  os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,phonix-ticket-system.onrender.com').split(',')
+CSRF_TRUSTED_ORIGINS = ['https://phonix-ticket-system.onrender.com']
 
 # 3. Usajili wa Application (Installed Apps)
 INSTALLED_APPS = [
@@ -38,7 +39,7 @@ MIDDLEWARE = [
 ]
 
 # 5. Mipangilio ya Faili Kuu la URL
-ROOT_URLCONF = 'phonix_core.urls'
+ROOT_URLCONF = 'phoenix_core.urls'
 
 # 6. Mipangilio ya Muonekano (Templates)
 TEMPLATES = [
@@ -58,7 +59,7 @@ TEMPLATES = [
 ]
 
 # 7. Mipangilio ya WSGI
-WSGI_APPLICATION = 'phonix_core.wsgi.application'
+WSGI_APPLICATION = 'phoenix_core.wsgi.application'
 
 # 8. Mipangilio ya Database (MAMP MySQL)
 DATABASES = {
