@@ -1,0 +1,489 @@
+[
+{
+    "model": "tickets.users",
+    "pk": 1,
+    "fields": {
+        "fullname": "hoppe bulenya",
+        "email": "hopebulenya@gmail.com",
+        "password_hash": "hopebulenya",
+        "phone": "0718340765",
+        "role": "customer",
+        "created_at": "2026-06-24T11:29:18Z"
+    }
+},
+{
+    "model": "tickets.users",
+    "pk": 2,
+    "fields": {
+        "fullname": "tilisho safari",
+        "email": "tilisho90@gmail.com",
+        "password_hash": "tililisho",
+        "phone": "0780496738",
+        "role": "customer",
+        "created_at": "2026-06-28T10:36:50Z"
+    }
+},
+{
+    "model": "tickets.users",
+    "pk": 3,
+    "fields": {
+        "fullname": "extra safari",
+        "email": "extra@gmail.com",
+        "password_hash": "extrasafari",
+        "phone": "0726766897",
+        "role": "operator",
+        "created_at": "2026-06-28T11:16:51Z"
+    }
+},
+{
+    "model": "tickets.users",
+    "pk": 4,
+    "fields": {
+        "fullname": "blue sky",
+        "email": "blue sky express",
+        "password_hash": "bluesky",
+        "phone": "0737827839",
+        "role": "operator",
+        "created_at": "2026-07-03T09:59:21Z"
+    }
+},
+{
+    "model": "tickets.users",
+    "pk": 5,
+    "fields": {
+        "fullname": "bm coach",
+        "email": "bm@gmail.com",
+        "password_hash": "bmcoach",
+        "phone": "0723878923",
+        "role": "operator",
+        "created_at": "2026-07-03T10:14:33Z"
+    }
+},
+{
+    "model": "tickets.users",
+    "pk": 6,
+    "fields": {
+        "fullname": "husen",
+        "email": "0780607737@phoenix.com",
+        "password_hash": "pbkdf2_sha256_placeholder",
+        "phone": "0780607737",
+        "role": "customer",
+        "created_at": "2026-07-03T13:02:19Z"
+    }
+},
+{
+    "model": "tickets.companies",
+    "pk": 1,
+    "fields": {
+        "company_name": "mashiku.co.ltd",
+        "license_number": "1090801020TZ",
+        "contact_email": "hellencathy270@gmail.com",
+        "is_verified": 2,
+        "created_at": "2026-06-24T12:10:28Z"
+    }
+},
+{
+    "model": "tickets.companies",
+    "pk": 2,
+    "fields": {
+        "company_name": "extra safari",
+        "license_number": "T67892",
+        "contact_email": "extra@gmail.com",
+        "is_verified": 1,
+        "created_at": "2026-06-28T11:17:44Z"
+    }
+},
+{
+    "model": "tickets.companies",
+    "pk": 3,
+    "fields": {
+        "company_name": "blue sky",
+        "license_number": "738739osg",
+        "contact_email": "bluesky@gmail.com",
+        "is_verified": 1,
+        "created_at": "2026-07-03T09:58:18Z"
+    }
+},
+{
+    "model": "tickets.companies",
+    "pk": 4,
+    "fields": {
+        "company_name": "ally's star",
+        "license_number": "T887ugn",
+        "contact_email": "allys@gmail.com",
+        "is_verified": 1,
+        "created_at": "2026-07-03T10:05:10Z"
+    }
+},
+{
+    "model": "tickets.companies",
+    "pk": 5,
+    "fields": {
+        "company_name": "bm coach",
+        "license_number": "T656kjm",
+        "contact_email": "bm@gmail.com",
+        "is_verified": 1,
+        "created_at": "2026-07-03T10:10:43Z"
+    }
+},
+{
+    "model": "tickets.buses",
+    "pk": 1,
+    "fields": {
+        "company": 1,
+        "plate_number": "T 345ZRT",
+        "total_capacity": 60,
+        "bus_type": "Luxury"
+    }
+},
+{
+    "model": "tickets.buses",
+    "pk": 2,
+    "fields": {
+        "company": 1,
+        "plate_number": "T 763TRY",
+        "total_capacity": 60,
+        "bus_type": "Luxury"
+    }
+},
+{
+    "model": "tickets.buses",
+    "pk": 3,
+    "fields": {
+        "company": 1,
+        "plate_number": "T 673TYG",
+        "total_capacity": 60,
+        "bus_type": "Ordinary"
+    }
+},
+{
+    "model": "tickets.buses",
+    "pk": 4,
+    "fields": {
+        "company": 2,
+        "plate_number": "T 907YTG",
+        "total_capacity": 60,
+        "bus_type": "Luxury"
+    }
+},
+{
+    "model": "tickets.buses",
+    "pk": 5,
+    "fields": {
+        "company": 3,
+        "plate_number": "T786hgd",
+        "total_capacity": 60,
+        "bus_type": "Luxury"
+    }
+},
+{
+    "model": "tickets.buses",
+    "pk": 6,
+    "fields": {
+        "company": 5,
+        "plate_number": "T 673gjk",
+        "total_capacity": 50,
+        "bus_type": "Luxury"
+    }
+},
+{
+    "model": "tickets.routes",
+    "pk": 1,
+    "fields": {
+        "origin": "ARUSHA",
+        "destination": "MWANZA",
+        "distance_km": "612.00",
+        "estimated_duration_hours": "18.00"
+    }
+},
+{
+    "model": "tickets.routes",
+    "pk": 2,
+    "fields": {
+        "origin": "arusha",
+        "destination": "dar es salaam",
+        "distance_km": "6300.00",
+        "estimated_duration_hours": "12.00"
+    }
+},
+{
+    "model": "tickets.routes",
+    "pk": 3,
+    "fields": {
+        "origin": "moshi",
+        "destination": "dodoma",
+        "distance_km": "789.00",
+        "estimated_duration_hours": "9.00"
+    }
+},
+{
+    "model": "tickets.routes",
+    "pk": 4,
+    "fields": {
+        "origin": "arusha",
+        "destination": "mwanza",
+        "distance_km": "670.00",
+        "estimated_duration_hours": "15.00"
+    }
+},
+{
+    "model": "tickets.routes",
+    "pk": 5,
+    "fields": {
+        "origin": "arusha",
+        "destination": "kahama",
+        "distance_km": "800.00",
+        "estimated_duration_hours": "17.00"
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 1,
+    "fields": {
+        "route": 1,
+        "bus": 1,
+        "departure_time": "2026-06-25T06:00:00Z",
+        "arrival_time": "2026-06-25T00:00:45Z",
+        "base_price": "80000.00",
+        "created_by": 1
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 2,
+    "fields": {
+        "route": 2,
+        "bus": 2,
+        "departure_time": "2026-07-01T10:52:27Z",
+        "arrival_time": "2026-07-02T10:52:56Z",
+        "base_price": "60000.00",
+        "created_by": 2
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 3,
+    "fields": {
+        "route": 3,
+        "bus": 4,
+        "departure_time": "2026-06-03T12:00:00Z",
+        "arrival_time": "2026-06-04T06:00:00Z",
+        "base_price": "80000.00",
+        "created_by": 3
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 4,
+    "fields": {
+        "route": 1,
+        "bus": 1,
+        "departure_time": "2026-06-30T11:21:43Z",
+        "arrival_time": "2026-07-01T00:00:00Z",
+        "base_price": "75000.00",
+        "created_by": 1
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 5,
+    "fields": {
+        "route": 2,
+        "bus": 4,
+        "departure_time": "2026-06-10T06:00:00Z",
+        "arrival_time": "2026-06-11T12:00:00Z",
+        "base_price": "70000.00",
+        "created_by": 2
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 6,
+    "fields": {
+        "route": 4,
+        "bus": 5,
+        "departure_time": "2026-07-10T06:00:00Z",
+        "arrival_time": "2026-07-12T00:00:00Z",
+        "base_price": "80000.00",
+        "created_by": 4
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 7,
+    "fields": {
+        "route": 2,
+        "bus": 1,
+        "departure_time": "2026-07-12T00:00:00Z",
+        "arrival_time": "2026-07-13T12:00:00Z",
+        "base_price": "85000.00",
+        "created_by": 1
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 8,
+    "fields": {
+        "route": 5,
+        "bus": 5,
+        "departure_time": "2026-07-14T06:00:00Z",
+        "arrival_time": "2026-07-15T18:00:00Z",
+        "base_price": "56000.00",
+        "created_by": 1
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 9,
+    "fields": {
+        "route": 2,
+        "bus": 5,
+        "departure_time": "2026-07-16T06:00:00Z",
+        "arrival_time": "2026-07-17T06:00:00Z",
+        "base_price": "80000.00",
+        "created_by": 1
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 10,
+    "fields": {
+        "route": 2,
+        "bus": 6,
+        "departure_time": "2026-07-18T06:00:00Z",
+        "arrival_time": "2026-07-19T18:00:00Z",
+        "base_price": "90000.00",
+        "created_by": 4
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 11,
+    "fields": {
+        "route": 2,
+        "bus": 6,
+        "departure_time": "2026-07-20T06:00:00Z",
+        "arrival_time": "2026-07-21T18:00:00Z",
+        "base_price": "60000.00",
+        "created_by": 5
+    }
+},
+{
+    "model": "tickets.schedules",
+    "pk": 12,
+    "fields": {
+        "route": 3,
+        "bus": 4,
+        "departure_time": "2026-07-26T06:00:00Z",
+        "arrival_time": "2026-07-27T06:00:00Z",
+        "base_price": "50000.00",
+        "created_by": 3
+    }
+},
+{
+    "model": "tickets.seatlocks",
+    "pk": 1,
+    "fields": {
+        "schedule": 12,
+        "user": 6,
+        "seat_number": 5,
+        "locked_at": "2026-07-03T13:02:19Z",
+        "expires_at": "2026-07-03T13:12:19Z",
+        "lock_status": "active"
+    }
+},
+{
+    "model": "tickets.seatlocks",
+    "pk": 2,
+    "fields": {
+        "schedule": 12,
+        "user": 6,
+        "seat_number": 6,
+        "locked_at": "2026-07-03T13:02:19Z",
+        "expires_at": "2026-07-03T13:12:19Z",
+        "lock_status": "active"
+    }
+},
+{
+    "model": "tickets.bookings",
+    "pk": 1,
+    "fields": {
+        "user": 6,
+        "schedule": 12,
+        "lock": 1,
+        "seat_number": 5,
+        "final_fare": "50000.00",
+        "ticket_hash": "d86d7c29883f484997636a3464514a40",
+        "cancellation_reason": null,
+        "refunded_by": null,
+        "booking_status": "confirmed",
+        "created_at": "2026-07-03T13:02:19Z"
+    }
+},
+{
+    "model": "tickets.bookings",
+    "pk": 2,
+    "fields": {
+        "user": 6,
+        "schedule": 12,
+        "lock": 2,
+        "seat_number": 6,
+        "final_fare": "50000.00",
+        "ticket_hash": "6d0bbe5f11634c63b94714139f023709",
+        "cancellation_reason": null,
+        "refunded_by": null,
+        "booking_status": "confirmed",
+        "created_at": "2026-07-03T13:02:19Z"
+    }
+},
+{
+    "model": "tickets.payments",
+    "pk": 1,
+    "fields": {
+        "booking": 1,
+        "amount_paid": "50000.00",
+        "payment_method": "M-Pesa",
+        "transaction_reference": "TXN-5EBC8D95",
+        "idempotency_key": "83712db28ad74b54a2ce980a5f010cf4",
+        "raw_api_payload": null,
+        "payment_status": "completed",
+        "paid_at": "2026-07-03T13:02:19Z"
+    }
+},
+{
+    "model": "tickets.payments",
+    "pk": 2,
+    "fields": {
+        "booking": 2,
+        "amount_paid": "50000.00",
+        "payment_method": "M-Pesa",
+        "transaction_reference": "TXN-73F31159",
+        "idempotency_key": "1af3cdfc35874d0193524c0084cce250",
+        "raw_api_payload": null,
+        "payment_status": "completed",
+        "paid_at": "2026-07-03T13:02:19Z"
+    }
+},
+{
+    "model": "tickets.amenityitems",
+    "pk": 1,
+    "fields": {
+        "item_name": "sodas",
+        "item_type": "drink",
+        "dietary_type": "Standard",
+        "is_active": 1,
+        "created_at": "2026-06-28T10:56:15Z"
+    }
+},
+{
+    "model": "tickets.amenityitems",
+    "pk": 2,
+    "fields": {
+        "item_name": "sodas",
+        "item_type": "drink",
+        "dietary_type": "Standard",
+        "is_active": 1,
+        "created_at": "2026-06-28T11:24:43Z"
+    }
+}
+]
